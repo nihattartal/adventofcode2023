@@ -11,7 +11,6 @@
   "type": "module",
   "dependencies": {
     "app-root-path": "^3.1.0",
-    "esm": "^3.2.25",
-    "fs": "^0.0.1-security"
+    "esm": "^3.2.25"
   }
 }
