@@ -1,4 +1,5 @@
 import fs from "fs";
+import appRoot from "app-root-path"
 
 class Game {
     constructor(id) {
@@ -25,8 +26,7 @@ function getNewConfCopy() {
 
 const games = new Map();
 
-
-const fileInput = fs.readFileSync('./inputs/02/input.txt', { encoding: 'utf8', flag: 'r' });
+const fileInput = fs.readFileSync(`${appRoot}/inputs/02/input.txt`, { encoding: 'utf8', flag: 'r' });
 fileInput.split("\n").forEach(input => {
     const [rawGame, rawConf] = input.split(":");
     const gameId = parseInt(rawGame.replace("Game ", ""));
