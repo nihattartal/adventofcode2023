@@ -49,9 +49,6 @@ fileInput.split("\n").forEach(input => {
 
 });
 
-
-//12 red cubes, 13 green cubes, and 14 blue cubes
-
 for (const key of games.keys()) {
   games.get(key).draws = games.get(key).draws.reduce((accm, game) => {
     if (game.red > accm.red) {
@@ -71,6 +68,7 @@ let result = 0;
 
 games.forEach((g, gameId) => {
     const game = g.draws;
+    //12 red cubes, 13 green cubes, and 14 blue cubes
     if (game.red > 12 || game.green > 13 || game.blue > 14) {
     } else {
       result += g.id
