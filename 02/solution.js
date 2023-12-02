@@ -26,7 +26,7 @@ function getNewConfCopy() {
 const games = new Map();
 
 
-const fileInput = fs.readFileSync('../inputs/02/part2.txt', { encoding: 'utf8', flag: 'r' });
+const fileInput = fs.readFileSync('./inputs/02/input.txt', { encoding: 'utf8', flag: 'r' });
 fileInput.split("\n").forEach(input => {
     const [rawGame, rawConf] = input.split(":");
     const gameId = parseInt(rawGame.replace("Game ", ""));
