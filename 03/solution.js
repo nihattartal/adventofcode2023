@@ -1,5 +1,6 @@
 import fs from "fs";
 import appRoot from "app-root-path"
+import _ from "lodash"
 
 /// Classes
 
@@ -22,22 +23,37 @@ class EnginePart {
     this.visited = true;
   }
 
-  isActive() {
-    return this.activatedBy.size > 0;
+  isActive(n = 0) {
+    return Array.from(this.activatedBy).some(c => c.canActivate(n));
   }
 
-  setActivatedBy(id) {
-    this.activatedBy.add(id);
+  setActivatedBy(connector) {
+    this.activatedBy.add(connector);
   }
 }
 
 class Connector {
-  constructor(id) {
-    this.id = id;
+  constructor(op) {
+    this.operation = op;
+    this.engineParts = new Set();
   }
 
-  getId() {
-    return this.id;
+  addEnginePart(ep) {
+    this.engineParts.add(ep);
+  }
+
+  canActivate(n) {
+    return this.engineParts.size > n;
+  }
+
+  calculate() {
+    if (this.engineParts.size < 2) {
+      return 0;
+    };
+
+    return Array.from(this.engineParts).reduce((res, item) => {
+      return item.getValue() * res;
+    }, 1);
   }
 }
 
@@ -63,7 +79,7 @@ const matrix = data.reduce((result, line, index) => {
 data.reduce((result, line, index) => {
   line.split('').forEach((ch, i) => {
     if (isNaN(ch) && ch != '.') {
-      result[index][i] = new Connector(`${index}-${i}`);
+      result[index][i] = new Connector(ch);
     }
   })
   return result;
@@ -78,8 +94,10 @@ function markActiveByCheckingNeighbors(y, x, matrix) {
         for (let i = x - 1; i <= x + 1; i++) {
           if (i >= 0 && i < matrix[0].length) {
             // HERE CHECK if neighbor is special char.
-            if (matrix[j][i] instanceof Connector) {
-              cursor.setActivatedBy((matrix[j][i]).getId());
+            let connector;
+            if ((connector = matrix[j][i]) instanceof Connector) {
+              connector.addEnginePart(cursor); 
+              cursor.setActivatedBy(connector);
             }
           }
         }
@@ -95,7 +113,8 @@ data.reduce((result, line, index) => {
   return result;
 }, matrix);
 
-const result = matrix.reduce((result, line) => {
+const clonedMatrix = _.cloneDeep(matrix);
+const result = clonedMatrix.reduce((result, line) => {
   let lineResult = 0; 
   line.filter(x => (x instanceof EnginePart)).forEach((item, i) => {
     if (item.isActive()) {
@@ -109,3 +128,13 @@ const result = matrix.reduce((result, line) => {
 }, 0);
 
 console.log(`Part 1: ${result}`);
+
+const clonedMatrixPart2 = _.cloneDeep(matrix);
+const result2 = clonedMatrixPart2.reduce((result, line) => {
+  let lineResult = 0; 
+  line.filter(x => (x instanceof Connector)).forEach((item, i) => {
+    lineResult += item.calculate();
+  })
+  return result + lineResult;
+}, 0);
+console.log(`Part 2: ${result2}`);
