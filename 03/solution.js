@@ -7,7 +7,7 @@ class EnginePart {
   constructor(strNumber) {
     this.val = parseInt(strNumber);
     this.visited = false;
-    this.active = false;
+    this.activatedBy = new Set();
   }
 
   getValue() {
@@ -23,11 +23,21 @@ class EnginePart {
   }
 
   isActive() {
-    return this.active;
+    return this.activatedBy.size > 0;
   }
 
-  setActive() {
-    this.active = true;
+  setActivatedBy(id) {
+    this.activatedBy.add(id);
+  }
+}
+
+class Connector {
+  constructor(id) {
+    this.id = id;
+  }
+
+  getId() {
+    return this.id;
   }
 }
 
@@ -53,7 +63,7 @@ const matrix = data.reduce((result, line, index) => {
 data.reduce((result, line, index) => {
   line.split('').forEach((ch, i) => {
     if (isNaN(ch) && ch != '.') {
-      result[index][i] = true;
+      result[index][i] = new Connector(`${index}-${i}`);
     }
   })
   return result;
@@ -61,19 +71,15 @@ data.reduce((result, line, index) => {
 
 function markActiveByCheckingNeighbors(y, x, matrix) {
   const cursor = matrix[y][x];
-  if (cursor instanceof EnginePart && !cursor.isActive()) {
+  if (cursor instanceof EnginePart) {
     let j = y - 1;
     for (let j = y - 1; j <= y + 1; j++) {
-      if (cursor.isActive()) {
-        break;
-      }
       if (j >= 0 && j < matrix.length) {
         for (let i = x - 1; i <= x + 1; i++) {
           if (i >= 0 && i < matrix[0].length) {
             // HERE CHECK if neighbor is special char.
-            if (matrix[j][i] == true) {
-              cursor.setActive();
-              break;
+            if (matrix[j][i] instanceof Connector) {
+              cursor.setActivatedBy((matrix[j][i]).getId());
             }
           }
         }
