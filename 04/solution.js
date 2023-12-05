@@ -19,15 +19,27 @@ class Card {
         return res;
       }, 0) - 1));
     }
+    
+    numberOfCopiesGained() {
+      return this.numbersOnCard.reduce((res, num) => {
+        if (this.winnerNumbers.includes(num)) {
+            return res + 1;
+        }
+        return res;
+      }, 0);
+    }
 }
 
-const result1 = data.reduce((res, item) => {
+const cardsArray = data.map(item => {
     const [winnerSection, cardSection] = item.split("|");
     const [_, numbersAsText] = winnerSection.split(":")
     const winnerNumbers = numbersAsText.trim().replaceAll("  ", " ").split(" ").map(x => parseInt(x));
     const playedNumbers = cardSection.trim().replaceAll("  ", " ").split(" ").map(x => parseInt(x));
 
-    const card = new Card(winnerNumbers, playedNumbers);
+    return new Card(winnerNumbers, playedNumbers);
+});
+
+const result1 = cardsArray.reduce((res, card) => {
     return res += card.calulate();
 },0);
 
