@@ -9,6 +9,7 @@ class Card {
     constructor(winnerNumbers, numbersOnCard) {
         this.winnerNumbers = winnerNumbers;
         this.numbersOnCard = numbersOnCard;
+        this.numberOfCopies = 1;
     }
 
     calulate() {
@@ -20,13 +21,21 @@ class Card {
       }, 0) - 1));
     }
     
-    numberOfCopiesGained() {
+    numberOfUnlockedNextItems() {
       return this.numbersOnCard.reduce((res, num) => {
         if (this.winnerNumbers.includes(num)) {
             return res + 1;
         }
         return res;
       }, 0);
+    }
+
+    increaseNumberOfCopiesBy(n) {
+        this.numberOfCopies += n;
+    }
+
+    getNumberOfCopies() {
+        return this.numberOfCopies;
     }
 }
 
@@ -44,3 +53,17 @@ const result1 = cardsArray.reduce((res, card) => {
 },0);
 
 console.log(`Part 1: ${result1}`);
+
+cardsArray.forEach((card, index) => {
+    const nextNCards = card.numberOfUnlockedNextItems();
+    for (let i = 1; i <= nextNCards; i++) {
+        cardsArray[index + i].increaseNumberOfCopiesBy(card.getNumberOfCopies());
+    }
+});
+
+const result2 = cardsArray.reduce((res, card) => {
+    return card.getNumberOfCopies() + res;
+}, 0);
+
+console.log(`Part 2: ${result2}`);
+// 3633 too low
