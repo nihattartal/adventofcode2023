@@ -28,3 +28,27 @@ const result = document.get("Time").reduce((res, timeData, index) => {
 }, 1);
 
 console.log(`Part 1: ${result}`);
+
+// Part 2
+const document2 = data.reduce((res, line) => {
+    const [label, rawData] = line.split(":").map(x => x.trim());
+    const gameData = parseInt(rawData.replace(/\s+/g, ""));
+    res.set(label, gameData);
+    return res;
+}, new Map())
+
+const timeData = document2.get("Time");
+const recordTime = document2.get("Distance");
+let numberOfWins = 0;
+
+for (let i = 0; i <= timeData; i++) {
+    const wait = i;
+    const remainintTime = timeData - i;
+
+    const distance = wait * remainintTime;
+    if (distance > recordTime) {
+        numberOfWins++;
+    } 
+}
+
+console.log(`Part 2: ${numberOfWins}`);
