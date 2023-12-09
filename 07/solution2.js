@@ -25,13 +25,9 @@ class Hand {
     this.kinds = rawHand.split('')
     this.bid = parseInt(bid);
     const items = new Map();
-    this.jCount = 0;
 
     let count;
     for (const kind of this.kinds) {
-      if (kind == 'J') {
-        this.jCount++;
-      }
       if (count = items.get(kind)) {
         items.set(kind, count + 1);
       } else {
@@ -39,13 +35,24 @@ class Hand {
       }
     }
 
+    if ((items.get('J') || 0) > 0) {
+      const sortedCounts = Array.from(items.entries()).sort((a,b) => b[1] - a[1]);
+      const jCount = items.get('J');
+      if (jCount == 5) {
+        items.set("Q", 5);
+      } else if (sortedCounts[0][0] != 'J') {
+        items.set(sortedCounts[0][0], sortedCounts[0][1] + jCount);
+      } else {
+        items.set(sortedCounts[1][0], sortedCounts[1][1] + jCount);
+      }
+      items.delete("J");
+    }
+
+
     this.rank = (() => {
       if (items.size == 1) {
         return 7;
       } else if (items.size == 2) {
-        if (this.jCount > 0) {
-          return 7;
-        }
         const rank = Array.from(items.values()).reduce((res, i) => {
           return res * i;
         }, 1);
@@ -56,15 +63,6 @@ class Hand {
           return 5;
         }
       } else if (items.size == 3) {
-        if (this.jCount > 1) {
-          return 6;
-        } else if (this.jCount == 1) {
-            if (Math.max(Array.from(items.values())) == 3) {
-              return 6;
-            } else {
-              return 5;
-            }
-        }
         const rank = Array.from(items.values()).reduce((res, i) => {
           return res * i;
         }, 1);
@@ -75,14 +73,8 @@ class Hand {
           return 3;
         }
       } else if (items.size == 4) {
-        if (this.jCount > 0) {
-          return 4;
-        } 
         return 2;
       } else {
-        if (this.jCount < 0) {
-          return 2;
-        }
         // Item size is 5
         return 1;
       }
