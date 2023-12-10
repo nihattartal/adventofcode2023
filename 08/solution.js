@@ -1,5 +1,6 @@
 import fs from "fs";
 import appRoot from "app-root-path"
+import computeLcm from "compute-lcm"
 
 const fileInput = fs.readFileSync(`${appRoot}/inputs/08/input.txt`, { encoding: 'utf8', flag: 'r' });
 const data = fileInput.split("\n").map(x => x.trim()).filter(x => !!x);
@@ -72,3 +73,27 @@ while (lastFound.location != "ZZZ") {
 }
 
 console.log(`Part 1: ${count}`);
+const startingNodes = Array.from(map.keys()).filter(x => x.endsWith("A"));
+
+const allFound = [];
+
+startingNodes.forEach(start => {
+  let count = 0;
+  let lastFound = map.get(start)
+
+  while (!lastFound.location.endsWith("Z")) {
+    const direction = directions[count % directions.length];
+    const currentLocation = lastFound
+    if (direction == "L") {
+      lastFound = currentLocation.left;
+      count++;
+    } else {
+      lastFound = currentLocation.right;
+      count++;
+    }
+  }
+  allFound.push(count);
+});
+
+
+console.log(`Part 2: ${computeLcm(...allFound)}`);
