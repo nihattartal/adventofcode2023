@@ -22,7 +22,7 @@ function findNextRowIndexWithRock(row, col) {
   return found;
 }
 
-const part1 = matrix.reverse().reduce((res, row, rowIndex) => {
+const part1 = _.cloneDeep(matrix).reverse().reduce((res, row, rowIndex) => {
   const realRowIndex = rowIndex + 1;
   const count = row.reduce((rowCount, col) => {
     if (col == "O") {
@@ -46,4 +46,8 @@ function northMagnet() {
       }
     })
   })
+}
+
+function rotateCounterClockwise() {
+  
 }
