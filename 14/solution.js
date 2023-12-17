@@ -2,22 +2,12 @@ import fs from "fs";
 import appRoot from "app-root-path"
 import _ from "lodash"
 
-const fileInput = fs.readFileSync(`${appRoot}/inputs/14/input.txt`, { encoding: 'utf8', flag: 'r' });
+const fileInput = fs.readFileSync(`${appRoot}/inputs/14/example.txt`, { encoding: 'utf8', flag: 'r' });
 const data = fileInput.split("\n").map(x => x.trim()).filter(x => !!x);
 
 const matrix = data.map(x => x.split(''));
 
-matrix.forEach((row, rowIndex) => {
-  return row.forEach((col, colIndex) => {
-    if (col == ".") {
-      const foundRockIndex = findNextRowIndexWithRock(rowIndex, colIndex);
-      if (foundRockIndex !== -1) {
-        matrix[foundRockIndex][colIndex] = ".";
-        matrix[rowIndex][colIndex] = "O";
-      }
-    }
-  })
-})
+northMagnet();
 
 function findNextRowIndexWithRock(row, col) {
   let found = -1;
@@ -43,3 +33,17 @@ const part1 = matrix.reverse().reduce((res, row, rowIndex) => {
   return res + (count * realRowIndex);
 }, 0);
 console.log(`Part 1: ${part1}`);
+
+function northMagnet() {
+  matrix.forEach((row, rowIndex) => {
+    return row.forEach((col, colIndex) => {
+      if (col == ".") {
+        const foundRockIndex = findNextRowIndexWithRock(rowIndex, colIndex);
+        if (foundRockIndex !== -1) {
+          matrix[foundRockIndex][colIndex] = ".";
+          matrix[rowIndex][colIndex] = "O";
+        }
+      }
+    })
+  })
+}
